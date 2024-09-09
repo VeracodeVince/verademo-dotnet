@@ -1,9 +1,3 @@
-# ASP.NET
-# Build and test ASP.NET projects.
-# Add steps that publish symbols, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
-# This is an example of using VeraDemoDotNet test application with the Veracode Static Pipeline scanner.  A Veracode subscription is required.
-
 trigger:
 - main
 
@@ -16,12 +10,15 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+# Step 1: Install NuGet
 - task: NuGetToolInstaller@1
 
+# Step 2: Restore NuGet packages
 - task: NuGetCommand@2
   inputs:
     restoreSolution: '$(solution)'
 
+# Step 3: Build the solution
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
@@ -29,17 +26,10 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-- task: CmdLine@2
-  displayName: Veracode Static Pipeline Scanner
-  inputs:
-    script: |
-      curl -sSO https://downloads.veracode.com/securityscan/pipeline-scan-LATEST.zip
-      unzip -o pipeline-scan-LATEST.zip
-      java -jar pipeline-scan.jar -vid $(VERACODE_API_ID) -vkey $(VERACODE_API_KEY) -f $(build.artifactstagingdirectory)\Verademo-dotnet.zip || true
-
+# Step 4: Publish build artifacts
 - task: PublishBuildArtifacts@1
-  displayName: Create Build Artifact for Veracode Static Pipeline Scanner Results
+  displayName: Publish Build Artifact
   inputs:
-    PathtoPublish: 'results.json'
+    PathtoPublish: '$(build.artifactStagingDirectory)'
     ArtifactName: 'Build'
     publishLocation: 'Container'
