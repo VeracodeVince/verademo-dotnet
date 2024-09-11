@@ -33,14 +33,12 @@ steps:
     PathtoPublish: '$(build.artifactStagingDirectory)'
     ArtifactName: 'Build'
     publishLocation: 'Container'
-
 - task: Veracode@3
   inputs:
-    ConnectionDetailsSelection: 'Credentials'
-    apiId: 'ddaca74b2abbe962e72f50bd8f7ed8c9'
-    apiKey: '9938c9dc742aeee934182e859d8bf3ae243fc68398dca58683176281c6000fe9255d65a5df1948ac27cd0fae104be1f28f34a66afe2e2e296b52a6cd1d7da2c1'
+    ConnectionDetailsSelection: 'Service Connection'
+    AnalysisService: 'Veracode Platform'
     veracodeAppProfile: '$(system.teamProject)'
     version: '$(build.buildNumber)'
     filepath: '$(build.artifactstagingdirectory)'
-    createProfile: true
+    importResults: true
     maximumWaitTime: '360'
