@@ -1,4 +1,4 @@
-name: Veracode Upload and Scan
+name: Veracode Package and Scan
 
 on:
   push:
@@ -12,25 +12,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: List All Files in Workspace
-        run: ls -R ${{ github.workspace }}
-
       - name: Build Project
         run: |
-          # Adjust the path based on the output of the file listing
-          dotnet build ${{ github.workspace }}/src/Verademo-dotnet.sln --configuration Release
+          dotnet build --configuration Release
 
-      - name: Veracode Upload and Scan
-        uses: veracode/veracode-uploadandscan-action@0.2.6
-        with:
-          appname: "verademo-dotnet"
-          createprofile: true
-          filepath: "${{ github.workspace }}/src/bin/Release/net6.0"  # Adjust this path if needed
-          version: "${{ github.run_id }}-${{ github.run_number }}"
-          vid: ${{ secrets.VERACODE_API_ID }}
-          vkey: ${{ secrets.VERACODE_API_KEY }}
-          createsandbox: false
-          sandboxname: "OptionalSandboxName"
-          scantimeout: 120
-          deleteincompletescan: true
-          debug: true
+      - name: Install Veracode CLI
+        run: |
+          curl -fsS https://tools.veracode.com/veracode-cli/install | sh
+
+      - name: Configure Veracode CLI
+        run: |
+          veracode configure --api-id ${{ secrets.VERACODE_API_ID }} --api-key ${{ secrets.VERACODE_API_KEY }}
+
+      - name: Package Application
+        run: |
+          veracode package --type directory --source ${{ github.workspace }}/bin/Release/net6.0 --output ${{ github.workspace }}/veracode_package.zip
+
+      - name: Upload and Scan
+        run: |
+          veracode upload --appname "verademo-dotnet" --filepath ${{ github.workspace }}/veracode_package.zip --version "${{ github.run_id }}-${{ github.run_number }}"
+          veracode scan --appname "verademo-dotnet" --version "${{ github.run_id }}-${{ github.run_number }}"
