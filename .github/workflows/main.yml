@@ -14,19 +14,19 @@ jobs:
 
       - name: Build Project
         run: |
-          # Replace this with your actual build command
-          echo "Building project..."
-          # Ensure the build output is in the correct location
+          # Run your build command; this example uses dotnet build for a .NET project
+          dotnet build --configuration Release
+          # The build output will typically go to the bin/Release/{framework} directory
 
-      - name: List Files in Compiled Directory
-        run: ls -R ${{ github.workspace }}/path/to/your/compiled/code
+      - name: List All Files in Workspace
+        run: ls -R ${{ github.workspace }}
 
       - name: Veracode Upload and Scan
         uses: veracode/veracode-uploadandscan-action@0.2.6
         with:
           appname: "verademo-dotnet"
           createprofile: true
-          filepath: "${{ github.workspace }}/path/to/your/compiled/code"  # Adjust this path to where your compiled files are
+          filepath: "${{ github.workspace }}/bin/Release/net6.0"  # Adjust this based on the output of the file listing
           version: "${{ github.run_id }}-${{ github.run_number }}"
           vid: ${{ secrets.VERACODE_API_ID }}
           vkey: ${{ secrets.VERACODE_API_KEY }}
