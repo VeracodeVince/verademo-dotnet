@@ -12,9 +12,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install Veracode CLI
+      - name: Download and Install Veracode CLI
         run: |
-          curl -fsS https://tools.veracode.com/veracode-cli/install | sh
+          mkdir -p veracode-cli
+          curl -fsSLo veracode-cli/veracode.zip https://downloads.veracode.com/tools/cli/latest/veracode-cli.zip
+          unzip veracode-cli/veracode.zip -d veracode-cli
+          export PATH=$PATH:$PWD/veracode-cli
+          echo "Veracode CLI installed in $(pwd)/veracode-cli"
+
+      - name: Verify Veracode CLI Installation
+        run: |
+          veracode --version
 
       - name: Configure Veracode CLI
         run: |
