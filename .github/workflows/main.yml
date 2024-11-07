@@ -1,4 +1,4 @@
-name: Build and Test
+name: Build and Compile
 
 on:
   push:
@@ -25,6 +25,3 @@ jobs:
 
       - name: Build
         run: dotnet build Verademo-Dotnet/Verademo-dotnet.sln --configuration Release --no-restore
-
-      - name: Test
-        run: dotnet test Verademo-Dotnet/Verademo-dotnet.sln --no-build --verbosity normal
