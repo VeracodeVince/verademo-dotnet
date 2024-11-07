@@ -13,19 +13,19 @@ jobs:
         uses: actions/checkout@v3
 
       - name: List All Files in Workspace
-        run: ls -R ${{ github.workspace }}  # Lists all files for verification
+        run: ls -R ${{ github.workspace }}
 
       - name: Build Project
         run: |
-          # Adjust this path based on where the .sln or .csproj file is actually located
-          dotnet build ${{ github.workspace }}/Verademo-dotnet/Verademo-dotnet.sln --configuration Release
+          # Adjust the path based on the output of the file listing
+          dotnet build ${{ github.workspace }}/src/Verademo-dotnet.sln --configuration Release
 
       - name: Veracode Upload and Scan
         uses: veracode/veracode-uploadandscan-action@0.2.6
         with:
           appname: "verademo-dotnet"
           createprofile: true
-          filepath: "${{ github.workspace }}/bin/Release/net6.0"  # Update if the build output directory differs
+          filepath: "${{ github.workspace }}/src/bin/Release/net6.0"  # Adjust this path if needed
           version: "${{ github.run_id }}-${{ github.run_number }}"
           vid: ${{ secrets.VERACODE_API_ID }}
           vkey: ${{ secrets.VERACODE_API_KEY }}
