@@ -15,13 +15,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: List all files and directories
+        run: ls -R  # This will display the structure for troubleshooting
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '7.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore Verademo-Dotnet/Verademo-dotnet.sln
+        run: dotnet restore Verademo-dotnet.sln  # Adjust this path if needed after seeing the file structure
 
       - name: Build
-        run: dotnet build Verademo-Dotnet/Verademo-dotnet.sln --configuration Release --no-restore
+        run: dotnet build Verademo-dotnet.sln --configuration Release --no-restore
