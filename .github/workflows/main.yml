@@ -11,18 +11,21 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        
+
+      - name: List files for debugging
+        run: ls -R ./  # Lists files to help confirm the correct path for artifacts
+
       - name: Veracode Upload and Scan
         uses: veracode/veracode-uploadandscan-action@0.2.6
         with:
-          appname: "verademo-dotnet"  # Your Veracode app name
-          createprofile: true  # creates profile if "verademo-dotnet" doesn't exist
-          filepath: "./path/to/your/compiled/code"  # path to build artifacts
-          version: "${{ github.run_id }}-${{ github.run_number }}"  # or specify a version identifier
-          vid: ${{ secrets.VERACODE_API_ID }}  # Veracode API ID from GitHub Secrets
-          vkey: ${{ secrets.VERACODE_API_KEY }}  # Veracode API Key from GitHub Secrets
-          createsandbox: false  # set to true if you want a sandbox for the scan
-          sandboxname: "OptionalSandboxName"  # specify if using a sandbox
-          scantimeout: 120  # timeout in minutes for scan completion
-          deleteincompletescan: true  # delete scan if it fails
-          debug: true  # enable debug for detailed output
+          appname: "verademo-dotnet"  # Veracode app name
+          createprofile: true  # Create app profile if it doesn't exist
+          filepath: "${{ github.workspace }}/path/to/your/compiled/code"  # Adjust this path
+          version: "${{ github.run_id }}-${{ github.run_number }}"  # Version identifier
+          vid: ${{ secrets.VERACODE_API_ID }}  # Veracode API ID
+          vkey: ${{ secrets.VERACODE_API_KEY }}  # Veracode API Key
+          createsandbox: false  # Optional: set to true if using a sandbox
+          sandboxname: "OptionalSandboxName"  # Optional: specify sandbox name
+          scantimeout: 120  # Timeout in minutes for scan completion
+          deleteincompletescan: true  # Delete incomplete scans if any errors occur
+          debug: true  # Enable debug mode for detailed output
