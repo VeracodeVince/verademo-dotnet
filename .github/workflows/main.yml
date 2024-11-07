@@ -12,10 +12,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Build Project
-        run: |
-          dotnet build --configuration Release
-
       - name: Install Veracode CLI
         run: |
           curl -fsS https://tools.veracode.com/veracode-cli/install | sh
@@ -24,9 +20,9 @@ jobs:
         run: |
           veracode configure --api-id ${{ secrets.VERACODE_API_ID }} --api-key ${{ secrets.VERACODE_API_KEY }}
 
-      - name: Package Application
+      - name: Package Application with Veracode Auto-Packager
         run: |
-          veracode package --type directory --source ${{ github.workspace }}/bin/Release/net6.0 --output ${{ github.workspace }}/veracode_package.zip
+          veracode auto-package --type directory --source ${{ github.workspace }} --output ${{ github.workspace }}/veracode_package.zip
 
       - name: Upload and Scan
         run: |
