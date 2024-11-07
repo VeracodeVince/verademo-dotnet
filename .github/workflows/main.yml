@@ -1,43 +1,30 @@
-name: Veracode Package and Scan
+name: Build and Test
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  veracode_scan:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Download and Install Veracode CLI
-        run: |
-          mkdir -p veracode-cli
-          curl -fsSLo veracode-cli/veracode.zip https://downloads.veracode.com/tools/cli/latest/veracode-cli.zip
-          
-          # Verify if download was successful
-          if [ ! -s veracode-cli/veracode.zip ]; then
-            echo "Veracode CLI download failed. Exiting."
-            exit 1
-          fi
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '7.0.x'
 
-          # Unzip the Veracode CLI and add it to PATH
-          unzip veracode-cli/veracode.zip -d veracode-cli || { echo "Unzipping failed"; exit 1; }
-          export PATH=$PATH:$PWD/veracode-cli
-          echo "Veracode CLI installed in $(pwd)/veracode-cli"
+      - name: Restore dependencies
+        run: dotnet restore
 
-      - name: Verify Veracode CLI Installation
-        run: veracode --version
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
 
-      - name: Configure Veracode CLI
-        run: veracode configure --api-id ${{ secrets.VERACODE_API_ID }} --api-key ${{ secrets.VERACODE_API_KEY }}
-
-      - name: Package Application with Veracode Auto-Packager
-        run: veracode auto-package --type directory --source ${{ github.workspace }} --output ${{ github.workspace }}/veracode_package.zip
-
-      - name: Upload and Scan
-        run: |
-          veracode upload --appname "verademo-dotnet" --filepath ${{ github.workspace }}/veracode_package.zip --version "${{ github.run_id }}-${{ github.run_number }}"
-          veracode scan --appname "verademo-dotnet" --version "${{ github.run_id }}-${{ github.run_number }}"
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
