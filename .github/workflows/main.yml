@@ -1,0 +1,28 @@
+name: Veracode Upload and Scan
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  veracode_scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Veracode Upload and Scan
+        uses: veracode/veracode-uploadandscan-action@0.2.6
+        with:
+          appname: "verademo-dotnet"  # Your Veracode app name
+          createprofile: true  # creates profile if "verademo-dotnet" doesn't exist
+          filepath: "./path/to/your/compiled/code"  # path to build artifacts
+          version: "${{ github.run_id }}-${{ github.run_number }}"  # or specify a version identifier
+          vid: ${{ secrets.VERACODE_API_ID }}  # Veracode API ID from GitHub Secrets
+          vkey: ${{ secrets.VERACODE_API_KEY }}  # Veracode API Key from GitHub Secrets
+          createsandbox: false  # set to true if you want a sandbox for the scan
+          sandboxname: "OptionalSandboxName"  # specify if using a sandbox
+          scantimeout: 120  # timeout in minutes for scan completion
+          deleteincompletescan: true  # delete scan if it fails
+          debug: true  # enable debug for detailed output
