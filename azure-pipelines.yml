@@ -34,14 +34,14 @@ steps:
     ArtifactName: 'Build'
     publishLocation: 'Container'
 
-# # Step 5: Veracode Code Scan 
-# - task: Veracode@3
-#   inputs:
-#     ConnectionDetailsSelection: 'Credentials'
-#     apiId: 'ddaca74b2abbe962e72f50bd8f7ed8c9'
-#     apiKey: '9938c9dc742aeee934182e859d8bf3ae243fc68398dca58683176281c6000fe9255d65a5df1948ac27cd0fae104be1f28f34a66afe2e2e296b52a6cd1d7da2c1'
-#     veracodeAppProfile: '$(system.teamProject)'
-#     version: '$(build.buildNumber)'
-#     filepath: '$(build.artifactstagingdirectory)'
-#     createProfile: false
-#     maximumWaitTime: '360'
+# Step 5: Veracode Code Scan 
+- task: Veracode@3
+  inputs:
+    ConnectionDetailsSelection: 'Credentials'
+    apiId: 'ddaca74b2abbe962e72f50bd8f7ed8c9'
+    apiKey: '9938c9dc742aeee934182e859d8bf3ae243fc68398dca58683176281c6000fe9255d65a5df1948ac27cd0fae104be1f28f34a66afe2e2e296b52a6cd1d7da2c1'
+    veracodeAppProfile: '$(system.teamProject)'
+    version: '$(build.buildNumber)'
+    filepath: '$(build.artifactstagingdirectory)'
+    createProfile: false
+    maximumWaitTime: '360'
