@@ -36,9 +36,9 @@ steps:
 
 - task: Veracode@3
   inputs:
-    ConnectionDetailsSelection: 'Service Connection'
-    AnalysisService: 'Veracode Platform'
+    ConnectionDetailsSelection: 'Credentials'
     veracodeAppProfile: '$(system.teamProject)'
     version: '$(pipeline.name)'
     filepath: '$(build.artifactstagingdirectory)'
+    createProfile: true
     maximumWaitTime: '360'
